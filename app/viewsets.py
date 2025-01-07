@@ -1,3 +1,5 @@
+from http.client import CREATED
+
 from knox.auth import TokenAuthentication
 from knox.models import AuthToken
 from rest_framework import generics, permissions, viewsets
@@ -22,7 +24,7 @@ class SignUpAPI(generics.GenericAPIView):
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": token[1]
-        })
+        }, status=CREATED)
 
 
 class SignInAPI(generics.GenericAPIView):

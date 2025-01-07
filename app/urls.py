@@ -9,7 +9,7 @@ urlpatterns += [
     path('auth/register/', SignUpAPI.as_view(), name="knox_register"),
     path('auth/login/', SignInAPI.as_view(), name="knox_login"),
     path('auth/user/', MainUser.as_view(), name="knox_user"),
-    path('auth/logout/', knox_views.LogoutView.as_view(), name="knox-logout"),
+    path('auth/logout/', knox_views.LogoutView.as_view(), name="knox_logout"),
 
     # add all viewsets here
     path('category/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name="category"),
