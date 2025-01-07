@@ -100,3 +100,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
         return queryset
+
+
+# criar uma viewset para a entidade para compartilhar uma task com outro usuario
+# criar uma viewset para a entidade para marcar a task como concluida

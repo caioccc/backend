@@ -97,7 +97,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         ref_name = "Task"
         model = Task
-        fields = ('id', 'name', 'description', 'category', 'user')
+        fields = ('id', 'name', 'description', 'category', 'user', 'status')
 
     def create(self, validated_data):
         """
@@ -105,22 +105,9 @@ class TaskSerializer(serializers.ModelSerializer):
         """
         if 'name' not in validated_data:
             raise serializers.ValidationError({'name': 'This field is required'})
-        if 'description' not in validated_data:
-            raise serializers.ValidationError({'description': 'This field is required'})
-        if 'category' not in validated_data:
-            raise serializers.ValidationError({'category': 'This field is required'})
-        if 'user' not in validated_data:
-            raise serializers.ValidationError({'user': 'This field is required'})
-        task = Category.objects.create(name=validated_data['name'], description=validated_data['description'], category=validated_data['category'], user=validated_data['user'])
+        task = Task.objects.create(name=validated_data['name'], description=validated_data['description'],
+                                   category=validated_data['category'], user=validated_data['user'])
         return task
 
-    def update(self, instance, validated_data):
-        """
-        This method is used to update a task
-        """
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        instance.category = validated_data.get('category', instance.category)
-        instance.user = validated_data.get('user', instance.user)
-        instance.save()
-        return instance
+
+
