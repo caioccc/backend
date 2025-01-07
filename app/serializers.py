@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from app.models import Category, Task
+from app.models import Category, Task, SharedTask
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         ref_name = "Category"
         model = Category
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'user')
 
     def create(self, validated_data):
         """
@@ -77,7 +77,9 @@ class CategorySerializer(serializers.ModelSerializer):
         """
         if 'name' not in validated_data:
             raise serializers.ValidationError({'name': 'This field is required'})
-        category = Category.objects.create(name=validated_data['name'])
+        if 'user' not in validated_data:
+            raise serializers.ValidationError({'user': 'This field is required'})
+        category = Category.objects.create(name=validated_data['name'], user=validated_data['user'])
         return category
 
     def update(self, instance, validated_data):
@@ -109,5 +111,26 @@ class TaskSerializer(serializers.ModelSerializer):
                                    category=validated_data['category'], user=validated_data['user'])
         return task
 
+
+class SharedTaskSerializer(serializers.ModelSerializer):
+    """
+    Shared task serializer
+    """
+
+    class Meta:
+        ref_name = "Shared Task"
+        model = SharedTask
+        fields = ('id', 'task', 'user', 'status')
+
+    def create(self, validated_data):
+        """
+        This method is used to create a new shared task
+        """
+        if 'task' not in validated_data:
+            raise serializers.ValidationError({'task': 'This field is required'})
+        if 'user' not in validated_data:
+            raise serializers.ValidationError({'user': 'This field is required'})
+        shared_task = SharedTask.objects.create(task=validated_data['task'], user=validated_data['user'])
+        return shared_task
 
 

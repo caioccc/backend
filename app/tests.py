@@ -55,9 +55,12 @@ class CategoryCrudUserTest(PatternCrudUserTest):
     def test_create_category(self):
         url = reverse('category')
         data = {
-            'name': 'test category'
+            'name': 'test category',
+            'user': self.user_data['id']
         }
+        print(data)
         response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], 'test category')
 
@@ -98,7 +101,8 @@ class CategoryCrudUserTest(PatternCrudUserTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         url = reverse('category', args=[response.data['results'][0]['id']])
         data = {
-            'name': 'updated category'
+            'name': 'updated category',
+            'user': self.user_data['id']
         }
         response = self.client.put(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -116,7 +120,8 @@ class TaskCrudUserTest(PatternCrudUserTest):
     def create_category(self):
         url = reverse('category')
         data = {
-            'name': 'test category'
+            'name': 'test category',
+            'user': self.user_data['id']
         }
         response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         return response.data['id']
@@ -135,6 +140,26 @@ class TaskCrudUserTest(PatternCrudUserTest):
         self.assertEqual(response.data['name'], 'test task')
         self.assertEqual(response.data['description'], 'test description')
         self.assertEqual(response.data['category'], category_id)
+
+    def test_pagination_create_12_tasks_and_list(self):
+        category_id = self.create_category()
+        url = reverse('task')
+        for i in range(12):
+            data = {
+                'name': f'test task {i}',
+                'description': f'test description {i}',
+                'category': category_id,
+                'user': self.user_data['id']
+            }
+            response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.data['name'], f'test task {i}')
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 10)
+        response = self.client.get(url + '?page=2', format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
 
     def test_list_task(self):
         self.test_create_task()
@@ -211,3 +236,73 @@ class TaskCrudUserTest(PatternCrudUserTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], True)
         self.assertEqual(response.data['name'], 'test task')
+
+
+class UserCrudUserTest(PatternCrudUserTest):
+    def test_list_user(self):
+        url = reverse('user')
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+    def test_retrieve_user(self):
+        url = reverse('user')
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('user', args=[response.data['results'][0]['id']])
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], 'testuser')
+
+
+class SharedTaskUserTest(PatternCrudUserTest):
+    def create_category(self):
+        url = reverse('category')
+        data = {
+            'name': 'test category',
+            'user': self.user_data['id']
+        }
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        return response.data['id']
+
+    def create_task(self):
+        category_id = self.create_category()
+        url = reverse('task')
+        data = {
+            'name': 'test task',
+            'description': 'test description',
+            'category': category_id,
+            'user': self.user_data['id']
+        }
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        return response.data['id']
+
+    def test_create_shared_task(self):
+        task_id = self.create_task()
+        url = reverse('sharedtask')
+        data = {
+            'task': task_id,
+            'user': self.user_data['id']
+        }
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['task'], task_id)
+
+    def test_list_shared_task(self):
+        self.test_create_shared_task()
+        url = reverse('sharedtask')
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+    def test_delete_shared_task(self):
+        self.test_create_shared_task()
+        url = reverse('sharedtask')
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('sharedtask', args=[response.data['results'][0]['id']])
+        response = self.client.delete(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

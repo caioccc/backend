@@ -1,13 +1,15 @@
 from http.client import CREATED
 
+from django.contrib.auth.models import User
 from knox.auth import TokenAuthentication
 from knox.models import AuthToken
 from rest_framework import generics, permissions, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from app.models import Category, Task
-from app.serializers import RegisterSerializer, UserSerializer, LoginSerializer, CategorySerializer, TaskSerializer
+from app.models import Category, Task, SharedTask
+from app.serializers import RegisterSerializer, UserSerializer, LoginSerializer, CategorySerializer, TaskSerializer, \
+    SharedTaskSerializer
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -70,11 +72,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated
     ]
     serializer_class = CategorySerializer
-    queryset = Category.objects.all()
     pagination_class = ResultsSetPagination
 
     def get_queryset(self):
-        queryset = Category.objects.all()
+        queryset = Category.objects.filter(user=self.request.user)
         # name = self.kwargs.get('name', None)
         name = self.request.query_params.get('name', None)
         if name is not None:
@@ -91,16 +92,49 @@ class TaskViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated
     ]
     serializer_class = TaskSerializer
-    queryset = Task.objects.all()
     pagination_class = ResultsSetPagination
 
     def get_queryset(self):
-        queryset = Task.objects.all()
+        queryset = Task.objects.filter(user=self.request.user)
         name = self.request.query_params.get('name', None)
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
         return queryset
 
 
-# criar uma viewset para a entidade para compartilhar uma task com outro usuario
-# criar uma viewset para a entidade para marcar a task como concluida
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    User viewset
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = UserSerializer
+    pagination_class = ResultsSetPagination
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        name = self.request.query_params.get('name', None)
+        if name is not None:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
+
+
+class SharedTaskViewSet(viewsets.ModelViewSet):
+    """
+    Shared task viewset
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = SharedTaskSerializer
+    pagination_class = ResultsSetPagination
+
+    def get_queryset(self):
+        queryset = SharedTask.objects.filter(user=self.request.user)
+        name = self.request.query_params.get('name', None)
+        if name is not None:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
