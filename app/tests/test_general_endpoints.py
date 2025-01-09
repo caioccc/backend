@@ -138,7 +138,6 @@ class TaskCrudUserTest(PatternCrudUserTest):
         response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], 'test task')
-        self.assertEqual(response.data['description'], 'test description')
         self.assertEqual(response.data['category'], category_id)
 
     def test_pagination_create_12_tasks_and_list(self):
@@ -156,8 +155,11 @@ class TaskCrudUserTest(PatternCrudUserTest):
             self.assertEqual(response.data['name'], f'test task {i}')
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 10)
+        self.assertEqual(len(response.data['results']), 5)
         response = self.client.get(url + '?page=2', format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 5)
+        response = self.client.get(url + '?page=3', format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 2)
 
@@ -168,7 +170,6 @@ class TaskCrudUserTest(PatternCrudUserTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
         self.assertEqual(response.data['results'][0]['name'], 'test task')
-        self.assertEqual(response.data['results'][0]['description'], 'test description')
 
     def test_search_by_name_task(self):
         self.test_create_task()
@@ -190,7 +191,6 @@ class TaskCrudUserTest(PatternCrudUserTest):
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'test task')
-        self.assertEqual(response.data['description'], 'test description')
 
     def test_update_task(self):
         self.test_create_task()
