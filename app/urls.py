@@ -1,7 +1,8 @@
 from django.urls import path
 from knox import views as knox_views
 
-from app.viewsets import SignUpAPI, SignInAPI, MainUser, CategoryViewSet, TaskViewSet, UserViewSet, SharedTaskViewSet
+from app.viewsets import SignUpAPI, SignInAPI, MainUser, CategoryViewSet, TaskViewSet, UserViewSet, SharedTaskViewSet, \
+    AllCategoryViewSet
 
 urlpatterns = []
 
@@ -15,6 +16,7 @@ urlpatterns += [
     path('category/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name="category"),
     path('category/<int:pk>/', CategoryViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),
          name="category"),
+    path('allcategories/', AllCategoryViewSet.as_view({'get': 'list'}), name='allcategories'),
     path('task/', TaskViewSet.as_view({'get': 'list', 'post': 'create'}), name="task"),
     path('task/<int:pk>/', TaskViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name="task"),
     path('user/', UserViewSet.as_view({'get': 'list'}), name="user"),

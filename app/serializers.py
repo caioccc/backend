@@ -107,9 +107,21 @@ class TaskSerializer(serializers.ModelSerializer):
         """
         if 'name' not in validated_data:
             raise serializers.ValidationError({'name': 'This field is required'})
-        task = Task.objects.create(name=validated_data['name'], description=validated_data['description'],
+        task = Task.objects.create(name=validated_data['name'],
                                    category=validated_data['category'], user=validated_data['user'])
         return task
+
+
+class CustomTaskSerializer(serializers.ModelSerializer):
+    """
+       Task serializer
+       """
+    category = CategorySerializer()
+
+    class Meta:
+        ref_name = "Task"
+        model = Task
+        fields = ('id', 'name', 'description', 'category', 'user', 'status')
 
 
 class SharedTaskSerializer(serializers.ModelSerializer):
@@ -132,5 +144,3 @@ class SharedTaskSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'user': 'This field is required'})
         shared_task = SharedTask.objects.create(task=validated_data['task'], user=validated_data['user'])
         return shared_task
-
-

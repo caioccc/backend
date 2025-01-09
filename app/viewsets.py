@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from app.models import Category, Task, SharedTask
 from app.serializers import RegisterSerializer, UserSerializer, LoginSerializer, CategorySerializer, TaskSerializer, \
-    SharedTaskSerializer
+    SharedTaskSerializer, CustomTaskSerializer
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -83,6 +83,21 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+class AllCategoryViewSet(viewsets.ModelViewSet):
+    """
+    Category viewset
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        queryset = Category.objects.filter(user=self.request.user)
+        return queryset
+
+
 class TaskViewSet(viewsets.ModelViewSet):
     """
     Task viewset
@@ -93,6 +108,17 @@ class TaskViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = TaskSerializer
     pagination_class = ResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = CustomTaskSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = CustomTaskSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     def get_queryset(self):
         queryset = Task.objects.filter(user=self.request.user).order_by('status', '-created_at', )
@@ -133,9 +159,8 @@ class SharedTaskViewSet(viewsets.ModelViewSet):
     pagination_class = ResultsSetPagination
 
     def get_queryset(self):
-        queryset = SharedTask.objects.filter(user=self.request.user).order_by('status', '-created_at',)
+        queryset = SharedTask.objects.filter(user=self.request.user).order_by('status', '-created_at', )
         name = self.request.query_params.get('name', None)
         if name is not None:
             queryset = queryset.filter(task__name=name)
         return queryset
-
