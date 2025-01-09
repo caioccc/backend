@@ -60,7 +60,7 @@ class MainUser(generics.RetrieveAPIView):
 
 
 class ResultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 5
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -95,7 +95,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     pagination_class = ResultsSetPagination
 
     def get_queryset(self):
-        queryset = Task.objects.filter(user=self.request.user)
+        queryset = Task.objects.filter(user=self.request.user).order_by('status', '-created_at', )
+
         name = self.request.query_params.get('name', None)
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
@@ -111,7 +112,6 @@ class UserViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated
     ]
     serializer_class = UserSerializer
-    pagination_class = ResultsSetPagination
 
     def get_queryset(self):
         queryset = User.objects.all()
@@ -133,8 +133,9 @@ class SharedTaskViewSet(viewsets.ModelViewSet):
     pagination_class = ResultsSetPagination
 
     def get_queryset(self):
-        queryset = SharedTask.objects.filter(user=self.request.user)
+        queryset = SharedTask.objects.filter(user=self.request.user).order_by('status', '-created_at',)
         name = self.request.query_params.get('name', None)
         if name is not None:
-            queryset = queryset.filter(name__icontains=name)
+            queryset = queryset.filter(task__name=name)
         return queryset
+

@@ -20,6 +20,7 @@ urlpatterns += [
     path('user/', UserViewSet.as_view({'get': 'list'}), name="user"),
     path('user/<int:pk>/', UserViewSet.as_view({'get': 'retrieve'}), name="user"),
     path('sharedtask/', SharedTaskViewSet.as_view({'get': 'list', 'post': 'create'}), name="sharedtask"),
-            path('sharedtask/<int:pk>/', SharedTaskViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name="sharedtask"),
+    path('sharedtask/<int:pk>/', SharedTaskViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),
+         name="sharedtask"),
 
 ]

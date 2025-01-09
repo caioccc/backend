@@ -244,13 +244,13 @@ class UserCrudUserTest(PatternCrudUserTest):
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(len(response.data), 1)
 
     def test_retrieve_user(self):
         url = reverse('user')
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        url = reverse('user', args=[response.data['results'][0]['id']])
+        url = reverse('user', args=[response.data[0]['id']])
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], 'testuser')
