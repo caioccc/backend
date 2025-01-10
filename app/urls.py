@@ -2,7 +2,7 @@ from django.urls import path
 from knox import views as knox_views
 
 from app.viewsets import SignUpAPI, SignInAPI, MainUser, CategoryViewSet, TaskViewSet, UserViewSet, SharedTaskViewSet, \
-    AllCategoryViewSet
+    AllCategoryViewSet, WeatherAPI
 
 urlpatterns = []
 
@@ -25,4 +25,5 @@ urlpatterns += [
     path('sharedtask/<int:pk>/', SharedTaskViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),
          name="sharedtask"),
 
+    path('weather/', WeatherAPI.as_view(), name="weather"),
 ]

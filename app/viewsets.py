@@ -7,9 +7,49 @@ from rest_framework import generics, permissions, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from app.models import Category, Task, SharedTask
+from app.ipapi.ipapi import get_ip_full_data
+from app.models import Category, Task, SharedTask, LocalUser, Weather
 from app.serializers import RegisterSerializer, UserSerializer, LoginSerializer, CategorySerializer, TaskSerializer, \
-    SharedTaskSerializer, CustomTaskSerializer, CustomSharedTaskSerializer
+    SharedTaskSerializer, CustomTaskSerializer, CustomSharedTaskSerializer, LocalUserSerializer, WeatherSerializer
+from app.weatherapi.weatherapi import get_weather
+
+
+def create_local_user(user):
+    try:
+        info_data = get_ip_full_data()
+        local_user = LocalUser.objects.create(
+            ip=info_data.get('ip'),
+            country_name=info_data.get('country_name'),
+            country_code=info_data.get('country_code'),
+            city=info_data.get('city'),
+            latitude=info_data.get('latitude'),
+            longitude=info_data.get('longitude'),
+            country_flag=info_data.get('location').get('country_flag'),
+            user=user
+        )
+        return local_user
+    except Exception as e:
+        print(e)
+        return None
+
+
+def get_weather_api(user):
+    try:
+        local_user = LocalUser.objects.get(user=user)
+        city = local_user.city
+        code = local_user.country_code
+        wheather_now = get_weather(city, code)
+        new_weather = Weather.objects.create(
+            city=city,
+            source_photo=wheather_now['current']['weather_icons'][0],
+            temperature=wheather_now['current']['temperature'],
+            description=wheather_now['current']['weather_descriptions'][0],
+            user=user
+        )
+        return WeatherSerializer(new_weather).data
+    except Exception as e:
+        print(e)
+        return None
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -23,6 +63,8 @@ class SignUpAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token = AuthToken.objects.create(user)
+        create_local_user(user)
+
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": token[1]
@@ -39,10 +81,17 @@ class SignInAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        return Response({
+        dict_response = {
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(user)[1]
-        })
+            "token": AuthToken.objects.create(user)[1],
+        }
+        weather_user = get_weather_api(user)
+        if weather_user:
+            dict_response['weather'] = weather_user
+        if LocalUser.objects.filter(user=user).exists():
+            dict_response['local_user'] = LocalUserSerializer(LocalUser.objects.get(user=user)).data
+
+        return Response(dict_response)
 
 
 class MainUser(generics.RetrieveAPIView):
@@ -175,3 +224,21 @@ class SharedTaskViewSet(viewsets.ModelViewSet):
         if name is not None:
             queryset = queryset.filter(task__name=name)
         return queryset
+
+
+class WeatherAPI(generics.GenericAPIView):
+    """
+    Wheather API endpoint.
+    """
+
+    def get(self, request):
+        user = self.request.user
+        query_weather = Weather.objects.filter(user=user)
+        if query_weather.exists():
+            return Response(WeatherSerializer(query_weather.order_by('-created_at').first()).data)
+        else:
+            weather_user = get_weather_api(user)
+            if weather_user:
+                return Response(weather_user)
+            else:
+                return Response({'error': 'No data found'}, status=404)

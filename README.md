@@ -188,6 +188,13 @@ A aplicação já estará rodando em http://localhost:8000
   http://localhost:8000/
 ```
 
+## Opcionais utilizados: IPSTACK e WHEATHERSTACK
+Esta aplicação faz uso de API externa para buscar informações de localização e clima. Para isso, foi utilizado o IPSTACK e WHEATHERSTACK.
+Ambos os serviços são gratuitos, porém, é necessário criar uma conta para obter a chave de acesso. Para isso, foi criado contas gratuitas em ambos os serviços e as chaves de acesso estão disponíveis no arquivo .env.dev
+
+OBS: As chaves de acesso atualmente estão no código, porém, o ideal é que as chaves de acesso fiquem em um arquivo de "enviroment" e que este arquivo não seja versionado.
+Porém para esta seleção decidi deixar as chaves de acesso no código para facilitar a execução do projeto.
+
 
 ## 📝 Licença
 

@@ -35,3 +35,29 @@ class SharedTask(models.Model):
 
     def __str__(self):
         return self.task.name
+
+
+class LocalUser(models.Model):
+    ip = models.GenericIPAddressField()
+    country_name = models.CharField(max_length=100, blank=True, null=True)
+    country_code = models.CharField(max_length=10)
+    city = models.CharField(max_length=100)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+    country_flag = models.URLField(blank=True, null=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.ip
+
+
+class Weather(models.Model):
+    city = models.CharField(max_length=100)
+    source_photo = models.URLField(blank=True, null=True)
+    temperature = models.FloatField(blank=True, null=True)
+    description = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.city

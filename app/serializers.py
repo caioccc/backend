@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from app.models import Category, Task, SharedTask
+from app.models import Category, Task, SharedTask, LocalUser, Weather
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -157,3 +157,25 @@ class CustomSharedTaskSerializer(serializers.ModelSerializer):
         ref_name = "Shared Task"
         model = SharedTask
         fields = ('id', 'task', 'user', 'status')
+
+
+class LocalUserSerializer(serializers.ModelSerializer):
+    """
+    Local user serializer
+    """
+
+    class Meta:
+        ref_name = "Local User"
+        model = LocalUser
+        fields = ('id', 'ip', 'country_name', 'country_code', 'city', 'latitude', 'longitude', 'country_flag', 'user')
+
+
+class WeatherSerializer(serializers.ModelSerializer):
+    """
+    Weather serializer
+    """
+
+    class Meta:
+        ref_name = "Weather"
+        model = Weather
+        fields = ('id', 'city', 'source_photo', 'temperature', 'description', 'user')

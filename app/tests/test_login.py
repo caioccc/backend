@@ -32,6 +32,7 @@ class AuthLoginApiTests(TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertIn('token', res.data)
+        self.assertIn('user', res.data)
 
     def test_login_user_invalid(self):
         payload = {
