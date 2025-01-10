@@ -196,6 +196,46 @@ OBS: As chaves de acesso atualmente estão no código, porém, o ideal é que as
 Porém para esta seleção decidi deixar as chaves de acesso no código para facilitar a execução do projeto.
 
 
+## Deploy
+
+Para o deploy desta aplicação backend utilizamos o Render.com, que é uma plataforma de hospedagem de aplicativos que oferece uma infraestrutura de nuvem gerenciada e automatizada para desenvolvedores.
+Com isso, implementei um sistema de CI/CD para que a cada push no repositório do Github, o Render.com faça o deploy automático da aplicação. Com isso, todo o push realizado na branch "master", faz com que a aplicação seja atualizada automaticamente.
+
+Para isto ser possível, foi necessário implementar o arquivo build.sh, que é responsável por fazer a execução de todos os comandos necessários durante o deploy da aplicação.
+A configuração do deploy foi feita diretamente no site do Render.com, onde foi configurado o repositório do Github, a branch a ser monitorada e o arquivo build.sh a ser executado.
+
+Segue abaixo o banco de dados PostgreSQL utilizado para este projeto:
+
+![BDService](https://i.imgur.com/czPHC20.png)
+
+Segue abaixo o serviço de backend utilizado para este projeto. Conforme imagem abaixo, Instâncias gratuitas são desativadas após períodos de inatividade. Elas não oferecem suporte a acesso SSH, dimensionamento, trabalhos únicos ou discos persistentes. Apenas Instancias pagas podem habilitar esses recursos.
+
+Então, nao estranhe se o serviço estiver lento ou indisponível, pois o serviço é gratuito e pode ser desativado a qualquer momento. A primeira renderização costuma levar 30 segundos, então, aguarde um pouco.
+
+![WebServiceService](https://i.imgur.com/MLuQSmF.png)
+
+Assim, a aplicação backend está disponível no link abaixo:
+
+```bash
+  https://backend-nea0.onrender.com
+```
+
+Para fins de acesso, pode-se acessar o Swagger ou o Painel de Admin, acesse o link abaixo:
+
+```bash
+  https://backend-nea0.onrender.com/swagger/
+```
+```bash
+  https://backend-nea0.onrender.com/admin/
+```
+
+Credenciais:
+    
+```bash
+username: admin
+password: Admin123!
+```
+
 ## 📝 Licença
 
 Este projeto esta sobe a licença [MIT](./LICENSE).
