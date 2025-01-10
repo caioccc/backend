@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from app.models import Category, Task, SharedTask
 from app.serializers import RegisterSerializer, UserSerializer, LoginSerializer, CategorySerializer, TaskSerializer, \
-    SharedTaskSerializer, CustomTaskSerializer
+    SharedTaskSerializer, CustomTaskSerializer, CustomSharedTaskSerializer
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -157,6 +157,17 @@ class SharedTaskViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = SharedTaskSerializer
     pagination_class = ResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = CustomSharedTaskSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = CustomSharedTaskSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     def get_queryset(self):
         queryset = SharedTask.objects.filter(user=self.request.user).order_by('status', '-created_at', )

@@ -144,3 +144,16 @@ class SharedTaskSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'user': 'This field is required'})
         shared_task = SharedTask.objects.create(task=validated_data['task'], user=validated_data['user'])
         return shared_task
+
+
+class CustomSharedTaskSerializer(serializers.ModelSerializer):
+    """
+    Shared task serializer
+    """
+    task = TaskSerializer()
+    user = UserSerializer()
+
+    class Meta:
+        ref_name = "Shared Task"
+        model = SharedTask
+        fields = ('id', 'task', 'user', 'status')
