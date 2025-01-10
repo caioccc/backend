@@ -222,7 +222,7 @@ class SharedTaskViewSet(viewsets.ModelViewSet):
         queryset = SharedTask.objects.filter(user=self.request.user).order_by('status', '-created_at', )
         name = self.request.query_params.get('name', None)
         if name is not None:
-            queryset = queryset.filter(task__name=name)
+            queryset = queryset.filter(task__name__icontains=name)
         return queryset
 
 
