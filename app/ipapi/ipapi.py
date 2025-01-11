@@ -8,5 +8,4 @@ ACCESS_KEY_IPSTACK = os.environ.get('ACCESS_KEY_IPSTACK', default='a0a99b4657e1c
 def get_ip_full_data():
     url = "https://api.ipstack.com/check?access_key={ACCESS_KEY_IPSTACK}".format(ACCESS_KEY_IPSTACK=ACCESS_KEY_IPSTACK)
     response = requests.get(url)
-    print(response.json())
     return response.json()

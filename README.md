@@ -1,6 +1,7 @@
 # Backend para Todo List App - Selecao OPME
 
-Backend para aplicação de Todo List App, desenvolvido em Python 3.10, com Django Framework, Django Rest Framework, Django Knox e PostgreSQL.
+Backend para aplicação de Todo List App, desenvolvido em Python 3.10, com Django Framework, Django Rest Framework,
+Django Knox e PostgreSQL.
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
@@ -59,9 +60,11 @@ OBS: É necessário ter o Python 3.10 instalado.
 
 ![Swagger](https://i.imgur.com/dORtVmp.png)
 
-Tomei a liberdade de incrementar ainda mais a qualidade de projeto backend adicionando mais uma camada para futuros desenvolvedores terem acesso a documentação da API, o Swagger.
+Tomei a liberdade de incrementar ainda mais a qualidade de projeto backend adicionando mais uma camada para futuros
+desenvolvedores terem acesso a documentação da API, o Swagger.
 
-A idéia é simplificar o desenvolvimento desta API pois esta ferramenta pode nos ajudar a projetar e documentar as APIs em escala.
+A idéia é simplificar o desenvolvimento desta API pois esta ferramenta pode nos ajudar a projetar e documentar as APIs
+em escala.
 
 Para acessar a documentação da API, acesse o link abaixo:
 
@@ -69,7 +72,8 @@ Para acessar a documentação da API, acesse o link abaixo:
   http://localhost:8000/swagger/
 ```
 
-Neste link será possível visualizar todos os endpoints disponíveis, bem como os métodos permitidos e os parâmetros necessários para cada endpoint.
+Neste link será possível visualizar todos os endpoints disponíveis, bem como os métodos permitidos e os parâmetros
+necessários para cada endpoint.
 
 ## Testes
 
@@ -110,7 +114,6 @@ Erros mais comuns onde foram todos corrigidos com a utilização do Flake8:
 - [x] E261 at least two spaces before inline comment
 - [x] E225 missing whitespace around operator
 - [x] E128 continuation line under-indented for visual indent
-
 
 ## Endpoints
 
@@ -153,9 +156,10 @@ Os dados a serem enviados são:
 - [x] POST /api/auth/logout/ - Faz o logout do usuário. Requer o Token de autorização.
 - [x] GET /api/auth/user/ - Retorna os dados do usuário logado. Requer o Token de autorização.
 
-
 ## Docker
-Além da instalação manual, o projeto também pode ser executado em um container Docker. Para isso, temos dois caminhos bem fáceis. Assim, basta seguir os passos abaixo:
+
+Além da instalação manual, o projeto também pode ser executado em um container Docker. Para isso, temos dois caminhos
+bem fáceis. Assim, basta seguir os passos abaixo:
 
 ### Primeiro caminho
 
@@ -166,7 +170,6 @@ Com o docker e docker-compose instalados, basta rodar o comando abaixo na raiz d
 ```
 
 A aplicação já estará rodando em http://localhost:8000
-
 
 ### Segundo caminho
 
@@ -189,28 +192,44 @@ A aplicação já estará rodando em http://localhost:8000
 ```
 
 ## Opcionais utilizados: IPSTACK e WHEATHERSTACK
-Esta aplicação faz uso de API externa para buscar informações de localização e clima. Para isso, foi utilizado o IPSTACK e WHEATHERSTACK.
-Ambos os serviços são gratuitos, porém, é necessário criar uma conta para obter a chave de acesso. Para isso, foi criado contas gratuitas em ambos os serviços e as chaves de acesso estão disponíveis no arquivo .env.dev
 
-OBS: As chaves de acesso atualmente estão no código, porém, o ideal é que as chaves de acesso fiquem em um arquivo de "enviroment" e que este arquivo não seja versionado.
+Esta aplicação faz uso de API externa para buscar informações de localização e clima. Para isso, foi utilizado o IPSTACK
+e WHEATHERSTACK.
+Ambos os serviços são gratuitos, porém, é necessário criar uma conta para obter a chave de acesso. Para isso, foi criado
+contas gratuitas em ambos os serviços e as chaves de acesso estão disponíveis no arquivo .env.dev
+
+OBS: As chaves de acesso atualmente estão no código, porém, o ideal é que as chaves de acesso fiquem em um arquivo de "
+enviroment" e que este arquivo não seja versionado.
 Porém para esta seleção decidi deixar as chaves de acesso no código para facilitar a execução do projeto.
 
+OBS 2: A maneira como foi implementada no backend a busca de informações de localização e clima, não é a mais adequada,
+pois o IP que está sendo checado é o endereço de IP do servidor, e não o endereço de IP do usuário. Para isso, seria
+necessário implementar um serviço no frontend que fizesse a busca do IP do usuário e enviasse para o backend. Porém,
+para este MVP, foi implementado desta maneira.
 
 ## Deploy
 
-Para o deploy desta aplicação backend utilizamos o Render.com, que é uma plataforma de hospedagem de aplicativos que oferece uma infraestrutura de nuvem gerenciada e automatizada para desenvolvedores.
-Com isso, implementei um sistema de CI/CD para que a cada push no repositório do Github, o Render.com faça o deploy automático da aplicação. Com isso, todo o push realizado na branch "master", faz com que a aplicação seja atualizada automaticamente.
+Para o deploy desta aplicação backend utilizamos o Render.com, que é uma plataforma de hospedagem de aplicativos que
+oferece uma infraestrutura de nuvem gerenciada e automatizada para desenvolvedores.
+Com isso, implementei um sistema de CI/CD para que a cada push no repositório do Github, o Render.com faça o deploy
+automático da aplicação. Com isso, todo o push realizado na branch "master", faz com que a aplicação seja atualizada
+automaticamente.
 
-Para isto ser possível, foi necessário implementar o arquivo build.sh, que é responsável por fazer a execução de todos os comandos necessários durante o deploy da aplicação.
-A configuração do deploy foi feita diretamente no site do Render.com, onde foi configurado o repositório do Github, a branch a ser monitorada e o arquivo build.sh a ser executado.
+Para isto ser possível, foi necessário implementar o arquivo build.sh, que é responsável por fazer a execução de todos
+os comandos necessários durante o deploy da aplicação.
+A configuração do deploy foi feita diretamente no site do Render.com, onde foi configurado o repositório do Github, a
+branch a ser monitorada e o arquivo build.sh a ser executado.
 
 Segue abaixo o banco de dados PostgreSQL utilizado para este projeto:
 
 ![BDService](https://i.imgur.com/czPHC20.png)
 
-Segue abaixo o serviço de backend utilizado para este projeto. Conforme imagem abaixo, Instâncias gratuitas são desativadas após períodos de inatividade. Elas não oferecem suporte a acesso SSH, dimensionamento, trabalhos únicos ou discos persistentes. Apenas Instancias pagas podem habilitar esses recursos.
+Segue abaixo o serviço de backend utilizado para este projeto. Conforme imagem abaixo, Instâncias gratuitas são
+desativadas após períodos de inatividade. Elas não oferecem suporte a acesso SSH, dimensionamento, trabalhos únicos ou
+discos persistentes. Apenas Instancias pagas podem habilitar esses recursos.
 
-Então, nao estranhe se o serviço estiver lento ou indisponível, pois o serviço é gratuito e pode ser desativado a qualquer momento. A primeira renderização costuma levar 30 segundos, então, aguarde um pouco.
+Então, nao estranhe se o serviço estiver lento ou indisponível, pois o serviço é gratuito e pode ser desativado a
+qualquer momento. A primeira renderização costuma levar 30 segundos, então, aguarde um pouco.
 
 ![WebServiceService](https://i.imgur.com/MLuQSmF.png)
 
@@ -225,12 +244,13 @@ Para fins de acesso, pode-se acessar o Swagger ou o Painel de Admin, acesse o li
 ```bash
   https://backend-nea0.onrender.com/swagger/
 ```
+
 ```bash
   https://backend-nea0.onrender.com/admin/
 ```
 
 Credenciais:
-    
+
 ```bash
 username: admin
 password: Admin123!
@@ -252,4 +272,5 @@ Este projeto esta sobe a licença [MIT](./LICENSE).
 [![Linkedin Badge](https://img.shields.io/badge/-Caio%20Marinho-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/caiomarinho/)](https://www.linkedin.com/in/caiomarinho/)
 [![Gmail Badge](https://img.shields.io/badge/-caiomarinho8@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:caiomarinho8@gmail.com)](mailto:caiomarinho8@gmail.com)
 
-Made with ❤️ by [Caio Marinho!](https://www.linkedin.com/in/caiomarinho/) 👋🏽 [Get in Touch!](https://www.linkedin.com/in/caiomarinho/)
+Made with ❤️ by [Caio Marinho!](https://www.linkedin.com/in/caiomarinho/)
+👋🏽 [Get in Touch!](https://www.linkedin.com/in/caiomarinho/)

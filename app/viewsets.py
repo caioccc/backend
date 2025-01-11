@@ -233,12 +233,16 @@ class WeatherAPI(generics.GenericAPIView):
 
     def get(self, request):
         user = self.request.user
-        query_weather = Weather.objects.filter(user=user)
-        if query_weather.exists():
-            return Response(WeatherSerializer(query_weather.order_by('-created_at').first()).data)
-        else:
-            weather_user = get_weather_api(user)
-            if weather_user:
-                return Response(weather_user)
+        try:
+            query_weather = Weather.objects.filter(user=user)
+            if query_weather.exists():
+                return Response(WeatherSerializer(query_weather.order_by('-created_at').first()).data)
             else:
-                return Response({'error': 'No data found'}, status=404)
+                weather_user = get_weather_api(user)
+                if weather_user:
+                    return Response(weather_user)
+                else:
+                    return Response({'error': 'No data found'}, status=404)
+        except Exception as e:
+            print(e)
+            return Response({'error': 'No data found'}, status=404)

@@ -58,9 +58,7 @@ class CategoryCrudUserTest(PatternCrudUserTest):
             'name': 'test category',
             'user': self.user_data['id']
         }
-        print(data)
         response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], 'test category')
 
@@ -68,7 +66,6 @@ class CategoryCrudUserTest(PatternCrudUserTest):
         self.test_create_category()
         url = reverse('category')
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
         self.assertEqual(response.data['results'][0]['name'], 'test category')
@@ -204,7 +201,6 @@ class TaskCrudUserTest(PatternCrudUserTest):
             'user': self.user_data['id'],
         }
         response = self.client.put(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'updated task')
         self.assertEqual(response.data['description'], 'updated description')
@@ -232,7 +228,6 @@ class TaskCrudUserTest(PatternCrudUserTest):
             'user': self.user_data['id']
         }
         response = self.client.put(url, data, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], True)
         self.assertEqual(response.data['name'], 'test task')
@@ -242,7 +237,6 @@ class UserCrudUserTest(PatternCrudUserTest):
     def test_list_user(self):
         url = reverse('user')
         response = self.client.get(url, format='json', HTTP_AUTHORIZATION=f'Token {self.token}')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
